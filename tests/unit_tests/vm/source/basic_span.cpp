@@ -17,16 +17,35 @@
 * SPDX-License-Identifier: Apache-2.0
 *******************************************************************************/
 
-#ifndef _ONEMKL_HPP_
-#define _ONEMKL_HPP_
+#include <algorithm>
+#include <cstdio>
+#include <cstdint>
+#include <cstddef>
+#include <random>
+#include <vector>
 
-#include "oneapi/mkl/types.hpp"
+#include <sycl/sycl.hpp>
 
-#include "oneapi/mkl/blas.hpp"
-#include "oneapi/mkl/dft.hpp"
-#include "oneapi/mkl/lapack.hpp"
-#include "oneapi/mkl/rng.hpp"
-#include "oneapi/mkl/sparse_blas.hpp"
-#include "oneapi/mkl/vm.hpp"
+#include <gtest/gtest.h>
 
-#endif //_ONEMKL_HPP_
+#include "test_helper.hpp"
+
+extern std::vector<sycl::device*> devices;
+
+namespace {
+
+class PowLinear: public ::testing::TestWithParam<sycl::device*> {};
+
+TEST_P(PowLinear, float) {
+    bool pow_s = true;
+    EXPECT_TRUE(pow_s);
+} 
+
+INSTANTIATE_TEST_SUITE_P(SpanTestSuite, PowLinear, ::testing::ValuesIn(devices),
+                         ::DeviceNamePrint());
+
+
+}
+
+
+

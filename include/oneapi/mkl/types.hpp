@@ -116,6 +116,23 @@ enum class order : char {
     E = 1,
 };
 
+struct slice {
+  size_t start;
+  size_t size;
+  int64_t stride;
+
+  constexpr slice() : start(0), size(0), stride(0) {}
+
+  constexpr slice(slice const& rhs) = default;
+  constexpr slice& operator=(slice const& rhs) = default;
+
+
+  constexpr slice(size_t _size)
+      : start(0), size(_size), stride(1) {}
+  constexpr slice(size_t _start, size_t _size, int64_t _stride)
+      : start(_start), size(_size), stride(_stride) {}
+};     // struct slice
+
 } //namespace mkl
 } //namespace oneapi
 

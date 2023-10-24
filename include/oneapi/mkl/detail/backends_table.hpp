@@ -41,7 +41,7 @@ namespace oneapi {
 namespace mkl {
 
 enum class device : uint16_t { x86cpu, intelgpu, nvidiagpu, amdgpu };
-enum class domain : uint16_t { blas, dft, lapack, rng, sparse_blas };
+enum class domain : uint16_t { blas, dft, lapack, rng, sparse_blas, vm };
 
 static std::map<domain, std::map<device, std::vector<const char*>>> libraries = {
     { domain::blas,

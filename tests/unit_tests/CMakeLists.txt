@@ -75,6 +75,12 @@ set(sparse_blas_TEST_LIST
 
 set(sparse_blas_TEST_LINK "")
 
+set(vm_TEST_LIST
+      vm_source)
+
+set(vm_TEST_LINK "")
+
+
 foreach(domain ${TARGET_DOMAINS})
   # Generate RT and CT test lists
   set(${domain}_TEST_LIST_RT ${${domain}_TEST_LIST})

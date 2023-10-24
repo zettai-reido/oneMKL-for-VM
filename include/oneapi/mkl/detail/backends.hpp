@@ -40,6 +40,7 @@ enum class backend {
     cufft,
     rocfft,
     portfft,
+    vecma,
     unsupported
 };
 
@@ -52,7 +53,8 @@ static backendmap backend_map = {
     { backend::rocblas, "rocblas" },     { backend::rocrand, "rocrand" },
     { backend::rocsolver, "rocsolver" }, { backend::portblas, "portblas" },
     { backend::cufft, "cufft" },         { backend::rocfft, "rocfft" },
-    { backend::portfft, "portfft" },     { backend::unsupported, "unsupported" }
+    { backend::portfft, "portfft" },     { backend::vecma, "vecma" },
+    { backend::unsupported, "unsupported" }
 };
 
 } //namespace mkl
