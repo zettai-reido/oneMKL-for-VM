@@ -184,6 +184,13 @@ foreach(domain ${TARGET_DOMAINS})
     list(APPEND ONEMKL_LIBRARIES_${domain} onemkl_dft_portfft)
   endif()
 
+  if(domain STREQUAL "vm" AND ENABLE_VECMA_BACKEND)
+    add_dependencies(test_main_${domain}_ct onemkl_vm_vecma)
+    list(APPEND ONEMKL_LIBRARIES_${domain} onemkl_vm_vecma)
+  endif()
+
+
+
   target_link_libraries(test_main_${domain}_ct PUBLIC
       gtest
       gtest_main
