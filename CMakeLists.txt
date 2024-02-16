@@ -66,7 +66,7 @@ option(ENABLE_CUFFT_BACKEND "Enable the cuFFT backend for the DFT interface" OFF
 option(ENABLE_ROCFFT_BACKEND "Enable the rocFFT backend for the DFT interface" OFF)
 option(ENABLE_PORTFFT_BACKEND "Enable the portFFT DFT backend for the DFT interface. Cannot be used with other DFT backends." OFF)
 # vm
-option(ENABLE_VECMA_BACKEND "Enable the reference CUDA-based Vector Math backend for the VM interface" ON)
+option(ENABLE_VECMA_BACKEND "Enable the reference CUDA-based Vector Math backend for the VM interface" OFF)
 
 set(ONEMKL_SYCL_IMPLEMENTATION "dpc++" CACHE STRING "Name of the SYCL compiler")
 set(HIP_TARGETS "" CACHE STRING "Target HIP architectures")
