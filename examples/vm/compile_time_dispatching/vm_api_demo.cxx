@@ -64,25 +64,10 @@ void async_sycl_error(sycl::exception_list el) {
     }
 }
 
-template <typename T>
 struct UniformFiller {
     std::mt19937_64 rng;
-    UniformFiller(uint64_t seed) : rng{ seed } {}
-
-    double gen64() {
-        return (rng() >> 11) * 0x1p-53;
-    }
-    float gen32() {
-        return (rng() >> 40) * 0x1p-40;
-    }
-    T operator()() {
-        if constexpr (std::is_same<T, float>::value) {
-            return gen32();
-        }
-        else {
-            return gen64();
-        }
-    }
+    UniformFiller(uint64_t seed) : rng(seed) { }
+    double operator()() { return (rng() >> 11) * 0x1p-53; }
 };
 
 bool check_mean(double mean, double expected, double sigma, int64_t n) {
@@ -128,7 +113,7 @@ bool run_usm(int64_t n, sycl::queue& queue) {
     T* y = new T[n];
     T* dev_y = sycl::malloc_device<T>(n, queue);
 
-    std::generate(a, a + n, UniformFiller<T>(88883)); // shared usm is accessible from host
+    std::generate(a, a + n, UniformFiller(88883)); // shared usm is accessible from host
     std::fill(y, y + n, std::nan(""));
 
     queue.memcpy(dev_y, y, n * sizeof(T)); // memcpy to device to clean device memory
@@ -158,7 +143,7 @@ bool run_buffer(int64_t n, sycl::queue& queue) {
     T* a = new T[n];
     T* y = new T[n];
 
-    std::generate(a, a + n, UniformFiller<T>(90001));
+    std::generate(a, a + n, UniformFiller(90001));
 
     {
         sycl::buffer<T, 1> buf_a{
@@ -186,7 +171,7 @@ bool run_stack(sycl::queue& queue) {
     T a[n];
     T y[n];
 
-    std::generate(a, a + n, UniformFiller<T>(80777));
+    std::generate(a, a + n, UniformFiller(80777));
     std::fill(y, y + n, std::nan(""));
 
     one::vm::cdfnorminv(oneapi::mkl::backend_selector<Backend>(queue), n, a, y,
@@ -206,7 +191,7 @@ bool run_heap(int64_t n, sycl::queue& queue) {
     T* a = new T[n];
     T* y = new T[n];
 
-    std::generate(a, a + n, UniformFiller<T>(99001));
+    std::generate(a, a + n, UniformFiller(99001));
     std::fill(y, y + n, std::nan(""));
 
     one::vm::cdfnorminv(oneapi::mkl::backend_selector<Backend>(queue), n, a, y,
@@ -248,7 +233,7 @@ int run_on(sycl::device& dev) {
     pass &= run_usm<Backend, double>(vector_usm_len, queue);
 
     return pass;
-} // int own_run_on(sycl::device & dev)
+} // int run_on(sycl::device &dev)
 
 } // namespace
 

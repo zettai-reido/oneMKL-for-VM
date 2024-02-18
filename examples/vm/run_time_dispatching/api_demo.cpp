@@ -64,25 +64,10 @@ void async_sycl_error(sycl::exception_list el) {
     }
 }
 
-template <typename T>
 struct UniformFiller {
     std::mt19937_64 rng;
-    UniformFiller(uint64_t seed) : rng{ seed } {}
-
-    double gen64() {
-        return (rng() >> 11) * 0x1p-53;
-    }
-    float gen32() {
-        return (rng() >> 40) * 0x1p-40;
-    }
-    T operator()() {
-        if constexpr (std::is_same<T, float>::value) {
-            return gen32();
-        }
-        else {
-            return gen64();
-        }
-    }
+    UniformFiller(uint64_t seed) : rng(seed) { }
+    double operator()() { return (rng() >> 11) * 0x1p-53; }
 };
 
 bool check_mean(double mean, double expected, double sigma, int64_t n) {
@@ -128,13 +113,13 @@ bool run_usm(int64_t n, sycl::queue& queue) {
     T* y = new T[n];
     T* dev_y = sycl::malloc_device<T>(n, queue);
 
-    std::generate(a, a + n, UniformFiller<T>(88883)); // shared usm is accessible from host
+    std::generate(a, a + n, UniformFiller(88883)); // shared usm is accessible from host
     std::fill(y, y + n, std::nan(""));
 
     queue.memcpy(dev_y, y, n * sizeof(T)); // memcpy to device to clean device memory
     queue.wait_and_throw(); // memcpy is async too
 
-    one::vm::cdfnorminv(queue, n, a, dev_y,
+    one::vm::cdfnorminv(oneapi::mkl::libkey(queue), queue, n, a, dev_y,
                         { /* no dependent events */ }, one::vm::mode::ha,
                         { one::vm::status::sing, 7.0f });
     queue.wait_and_throw(); // USM call is asynchronous so wait is needed
@@ -158,7 +143,7 @@ bool run_buffer(int64_t n, sycl::queue& queue) {
     T* a = new T[n];
     T* y = new T[n];
 
-    std::generate(a, a + n, UniformFiller<T>(90001));
+    std::generate(a, a + n, UniformFiller(90001));
 
     {
         sycl::buffer<T, 1> buf_a{
@@ -166,7 +151,7 @@ bool run_buffer(int64_t n, sycl::queue& queue) {
         }; // SYCL buffer which copies data from 'a', but does not copy back
         sycl::buffer<T, 1> buf_y{ y, n }; // SYCL buffer which copy back to 'y' on destruction
 
-        one::vm::cdfnorminv(queue, n, buf_a, buf_y,
+        one::vm::cdfnorminv(oneapi::mkl::backend_selector<Backend>(queue), n, buf_a, buf_y,
                             one::vm::mode::ha, { one::vm::status::sing, 7.0f });
 
     } // buf_y destructed, data now in 'y'
@@ -179,17 +164,17 @@ bool run_buffer(int64_t n, sycl::queue& queue) {
     return pass;
 }
 
-template <typename T, int n>
+template <oneapi::mkl::backend Backend, typename T, size_t n>
 bool run_stack(sycl::queue& queue) {
     namespace one = oneapi::mkl;
 
     T a[n];
     T y[n];
 
-    std::generate(a, a + n, UniformFiller<T>(80777));
+    std::generate(a, a + n, UniformFiller(80777));
     std::fill(y, y + n, std::nan(""));
 
-    one::vm::cdfnorminv(queue, n, a, y,
+    one::vm::cdfnorminv(oneapi::mkl::backend_selector<Backend>(queue), n, a, y,
                         { /* no dependent events */ }, one::vm::mode::ha,
                         { one::vm::status::sing, 7.0f });
     // function returns with result ready when used with heap pointer as output
@@ -199,17 +184,17 @@ bool run_stack(sycl::queue& queue) {
     return pass;
 }
 
-template <typename T>
+template <oneapi::mkl::backend Backend, typename T>
 bool run_heap(int64_t n, sycl::queue& queue) {
     namespace one = oneapi::mkl;
 
     T* a = new T[n];
     T* y = new T[n];
 
-    std::generate(a, a + n, UniformFiller<T>(99001));
+    std::generate(a, a + n, UniformFiller(99001));
     std::fill(y, y + n, std::nan(""));
 
-    one::vm::cdfnorminv(queue, n, a, y,
+    one::vm::cdfnorminv(oneapi::mkl::backend_selector<Backend>(queue), n, a, y,
                         { /* no dependent events */ }, one::vm::mode::ha,
                         { one::vm::status::sing, 7.0f });
     // function returns with result ready when used with heap pointer as output
@@ -222,7 +207,7 @@ bool run_heap(int64_t n, sycl::queue& queue) {
     return pass;
 }
 
-template <typename T>
+template <oneapi::mkl::backend Backend>
 int run_on(sycl::device& dev) {
     bool pass = true;
 
@@ -238,17 +223,17 @@ int run_on(sycl::device& dev) {
 
     sycl::queue queue(dev, async_sycl_error);
 
-    pass &= run_stack<float, vector_stack_len>(queue);
-    pass &= run_heap<float>(vector_heap_len, queue);
-    pass &= run_buffer<float>(vector_buffer_len, queue);
-    pass &= run_usm<float>(vector_usm_len, queue);
-    pass &= run_stack<double, vector_stack_len>(queue);
-    pass &= run_heap<double>(vector_heap_len, queue);
-    pass &= run_buffer<double>(vector_buffer_len, queue);
-    pass &= run_usm<double>(vector_usm_len, queue);
+    pass &= run_stack<Backend, float, vector_stack_len>(queue);
+    pass &= run_heap<Backend, float>(vector_heap_len, queue);
+    pass &= run_buffer<Backend, float>(vector_buffer_len, queue);
+    pass &= run_usm<Backend, float>(vector_usm_len, queue);
+    pass &= run_stack<Backend, double, vector_stack_len>(queue);
+    pass &= run_heap<Backend, double>(vector_heap_len, queue);
+    pass &= run_buffer<Backend, double>(vector_buffer_len, queue);
+    pass &= run_usm<Backend, double>(vector_usm_len, queue);
 
     return pass;
-} // int own_run_on(sycl::device & dev)
+} // int run_on(sycl::device &dev)
 
 } // namespace
 
