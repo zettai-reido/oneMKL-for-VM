@@ -126,7 +126,8 @@ int main(int argc, char** argv) {
 #if !defined(ONEMKL_ENABLE_CUBLAS_BACKEND) && !defined(ONEMKL_ENABLE_CURAND_BACKEND) && \
     !defined(ONEMKL_ENABLE_CUSOLVER_BACKEND) &&                                         \
     !defined(ONEMKL_ENABLE_PORTBLAS_BACKEND_NVIDIA_GPU) &&                              \
-    !defined(ONEMKL_ENABLE_CUFFT_BACKEND) && !defined(ONEMKL_ENABLE_PORTFFT_BACKEND)
+    !defined(ONEMKL_ENABLE_CUFFT_BACKEND) && !defined(ONEMKL_ENABLE_PORTFFT_BACKEND) && \
+    !defined(ONEMKL_ENABLE_CUSPARSE_BACKEND)
                         if (dev.is_gpu() && vendor_id == NVIDIA_ID)
                             continue;
 #endif
