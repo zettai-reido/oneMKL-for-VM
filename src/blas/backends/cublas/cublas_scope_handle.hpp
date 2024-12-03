@@ -30,7 +30,7 @@
 #include "cublas_handle.hpp"
 
 namespace oneapi {
-namespace mkl {
+namespace math {
 namespace blas {
 namespace cublas {
 
@@ -92,6 +92,6 @@ public:
 
 } // namespace cublas
 } // namespace blas
-} // namespace mkl
+} // namespace math
 } // namespace oneapi
 #endif //_CUBLAS_SCOPED_HANDLE_HPP_

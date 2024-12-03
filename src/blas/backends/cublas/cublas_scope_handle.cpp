@@ -19,7 +19,7 @@
 #include "cublas_scope_handle.hpp"
 
 namespace oneapi {
-namespace mkl {
+namespace math {
 namespace blas {
 namespace cublas {
 
@@ -69,5 +69,5 @@ sycl::context CublasScopedContextHandler::get_context(const sycl::queue& queue) 
 
 } // namespace cublas
 } // namespace blas
-} // namespace mkl
+} // namespace math
 } // namespace oneapi
