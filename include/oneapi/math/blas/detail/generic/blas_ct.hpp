@@ -17,8 +17,8 @@
 *
 **************************************************************************/
 
-#ifndef _DETAIL_PORTBLAS_BLAS_CT_HPP_
-#define _DETAIL_PORTBLAS_BLAS_CT_HPP_
+#ifndef _DETAIL_GENERIC_BLAS_BLAS_CT_HPP_
+#define _DETAIL_GENERIC_BLAS_BLAS_CT_HPP_
 
 #if __has_include(<sycl/sycl.hpp>)
 #include <sycl/sycl.hpp>
@@ -30,7 +30,7 @@
 
 #include "oneapi/math/types.hpp"
 #include "oneapi/math/detail/backend_selector.hpp"
-#include "oneapi/math/blas/detail/portblas/onemath_blas_portblas.hpp"
+#include "oneapi/math/blas/detail/generic/onemath_blas_generic.hpp"
 #include "oneapi/math/blas/detail/blas_ct_backends.hpp"
 
 namespace oneapi {
@@ -54,4 +54,4 @@ namespace row_major {
 } //namespace math
 } //namespace oneapi
 
-#endif //_DETAIL_PORTBLAS_BLAS_CT_HPP_
+#endif //_DETAIL_GENERIC_BLAS_BLAS_CT_HPP_

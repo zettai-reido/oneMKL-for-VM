@@ -40,6 +40,6 @@ if(ENABLE_ROCBLAS_BACKEND AND UNIX)
   add_subdirectory(rocblas)
 endif()
 
-if(ENABLE_PORTBLAS_BACKEND AND UNIX)
-  add_subdirectory(portblas)
+if(ENABLE_GENERIC_BLAS_BACKEND AND UNIX)
+  add_subdirectory(generic)
 endif()

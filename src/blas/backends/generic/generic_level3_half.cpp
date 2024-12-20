@@ -24,12 +24,12 @@
 #endif
 
 #include "oneapi/math/exceptions.hpp"
-#include "oneapi/math/blas/detail/portblas/onemath_blas_portblas.hpp"
+#include "oneapi/math/blas/detail/generic/onemath_blas_generic.hpp"
 
 namespace oneapi {
 namespace math {
 namespace blas {
-namespace portblas {
+namespace generic {
 namespace column_major {
 
 // BUFFER
@@ -97,7 +97,7 @@ sycl::event gemm(sycl::queue& queue, oneapi::math::transpose transa, oneapi::mat
 }
 
 } // namespace row_major
-} // namespace portblas
+} // namespace generic
 } // namespace blas
 } // namespace math
 } // namespace oneapi

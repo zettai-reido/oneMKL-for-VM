@@ -23,21 +23,24 @@
 #include <CL/sycl.hpp>
 #endif
 
-#include "portblas_common.hpp"
+#include "generic_common.hpp"
 #include "oneapi/math/exceptions.hpp"
-#include "oneapi/math/blas/detail/portblas/onemath_blas_portblas.hpp"
+#include "oneapi/math/blas/detail/generic/onemath_blas_generic.hpp"
 
 namespace oneapi {
 namespace math {
 namespace blas {
-namespace portblas {
+namespace generic {
+
+using real_t = double;
+
 namespace column_major {
 
 #define COLUMN_MAJOR
 constexpr bool is_column_major() {
     return true;
 }
-#include "portblas_batch.cxx"
+#include "generic_level3.cxx"
 #undef COLUMN_MAJOR
 
 } // namespace column_major
@@ -47,11 +50,11 @@ namespace row_major {
 constexpr bool is_column_major() {
     return false;
 }
-#include "portblas_batch.cxx"
+#include "generic_level3.cxx"
 #undef ROW_MAJOR
 
 } // namespace row_major
-} // namespace portblas
+} // namespace generic
 } // namespace blas
 } // namespace math
 } // namespace oneapi

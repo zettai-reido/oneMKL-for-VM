@@ -152,9 +152,9 @@ foreach(domain ${TEST_TARGET_DOMAINS})
     list(APPEND ONEMATH_LIBRARIES_${domain} onemath_${domain}_netlib)
   endif()
 
-  if(domain STREQUAL "blas" AND ENABLE_PORTBLAS_BACKEND)
-    add_dependencies(test_main_${domain}_ct onemath_${domain}_portblas)
-    list(APPEND ONEMATH_LIBRARIES_${domain} onemath_${domain}_portblas)
+  if(domain STREQUAL "blas" AND ENABLE_GENERIC_BLAS_BACKEND)
+    add_dependencies(test_main_${domain}_ct onemath_${domain}_generic)
+    list(APPEND ONEMATH_LIBRARIES_${domain} onemath_${domain}_generic)
   endif()
 
   if(domain STREQUAL "lapack" AND ENABLE_CUSOLVER_BACKEND)

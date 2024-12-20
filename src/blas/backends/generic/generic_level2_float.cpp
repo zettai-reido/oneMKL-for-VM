@@ -17,45 +17,44 @@
 * SPDX-License-Identifier: Apache-2.0
 *******************************************************************************/
 
-#ifndef _ONEMATH_BLAS_PORTBLAS_HPP_
-#define _ONEMATH_BLAS_PORTBLAS_HPP_
-
 #if __has_include(<sycl/sycl.hpp>)
 #include <sycl/sycl.hpp>
 #else
 #include <CL/sycl.hpp>
 #endif
 
-#include <complex>
-
-#include "oneapi/math/types.hpp"
-
-#include "oneapi/math/detail/export.hpp"
+#include "generic_common.hpp"
+#include "oneapi/math/exceptions.hpp"
+#include "oneapi/math/blas/detail/generic/onemath_blas_generic.hpp"
 
 namespace oneapi {
 namespace math {
-
-using oneapi::math::transpose;
-using oneapi::math::uplo;
-using oneapi::math::side;
-using oneapi::math::diag;
-using oneapi::math::offset;
-
 namespace blas {
-namespace portblas {
+namespace generic {
+
+using real_t = float;
+
 namespace column_major {
 
-#include "oneapi/math/blas/detail/onemath_blas_backends.hxx"
+#define COLUMN_MAJOR
+constexpr bool is_column_major() {
+    return true;
+}
+#include "generic_level2.cxx"
+#undef COLUMN_MAJOR
 
-} //namespace column_major
+} // namespace column_major
 namespace row_major {
 
-#include "oneapi/math/blas/detail/onemath_blas_backends.hxx"
+#define ROW_MAJOR
+constexpr bool is_column_major() {
+    return false;
+}
+#include "generic_level2.cxx"
+#undef ROW_MAJOR
 
-} //namespace row_major
-} // namespace portblas
+} // namespace row_major
+} // namespace generic
 } // namespace blas
 } // namespace math
 } // namespace oneapi
-
-#endif // _ONEMATH_BLAS_PORTBLAS_HPP_
